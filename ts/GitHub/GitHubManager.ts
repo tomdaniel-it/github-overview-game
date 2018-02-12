@@ -1,5 +1,5 @@
 import {HttpClient, HttpClientResponse} from "./HttpClient.js";
-import {default_settings} from "./DefaultSettings.js";
+import {default_settings} from "../DefaultSettings.js";
 import Project from "../Project.js";
 import {keys} from "../Keys.js";
 
