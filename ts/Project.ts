@@ -1,5 +1,7 @@
-export default class Project {
-    name:string;
+import InformationObject from "./InformationObject.js";
+
+export default class Project implements InformationObject {
+    title:string;
     created_at: Date;
     updated_at: Date;
     language: string;
@@ -7,8 +9,8 @@ export default class Project {
     image_url: string;
     project_url: string;
 
-    constructor(name:string, created_at:Date, updated_at:Date, language:string, description:string="", image_url:string="", project_url:string){
-        this.name = name;
+    constructor(title:string, created_at:Date, updated_at:Date, language:string, description:string="", image_url:string="", project_url:string){
+        this.title = title;
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.language = language;
@@ -23,5 +25,17 @@ export default class Project {
 
     setImageUrl(image_url:string){
         this.image_url = image_url;
+    }
+
+    getTitle(){
+        return this.title;
+    }
+
+    getDescription(){
+        return this.description;
+    }
+
+    getImageUrl(){
+        return this.image_url;
     }
 }
