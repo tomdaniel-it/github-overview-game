@@ -72,4 +72,20 @@ export default class Skyscraper implements Visualizable, Solid {
         }
         this.color = color;
     }
+
+    getX(){
+        return this.x;
+    }
+
+    getY(){
+        return this.y;
+    }
+
+    getWidth(){
+        return this.width;
+    }
+
+    getHeight(){
+        return this.height;
+    }
 }

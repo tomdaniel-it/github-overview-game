@@ -7,6 +7,8 @@ import Movable from "./Movable.js";
 import { default_settings } from "../DefaultSettings.js";
 import TerrainBuilder from "./TerrainBuilder.js";
 import Skyscraper from "./Terrain/Skyscraper.js";
+import Hint from "./Hint/Hint.js";
+import CrateHint from "./Hint/CrateHint.js";
 
 export default class Game {
     canvas:HTMLCanvasElement;
@@ -17,6 +19,7 @@ export default class Game {
     movableElements:Array<Movable>;
     player:Player;
     terrainBuilder:TerrainBuilder;
+    crateHint:CrateHint;
 
     constructor(){
         this.canvas = <HTMLCanvasElement> document.querySelector("canvas");
@@ -29,8 +32,6 @@ export default class Game {
     }
 
     start(){
-        this.player = new Player(200, 400, PlayerDirection.RIGHT);
-        this.visualizableElements.push(this.player);
         let thisObj = this;
         this.updateScreen(thisObj);
     }
@@ -46,6 +47,13 @@ export default class Game {
         this.terrainBuilder = new TerrainBuilder();
         this.terrainBuilder.build();
         this.visualizableElements = this.visualizableElements.concat(this.terrainBuilder.getTerrainElements());
+        this.initializePlayer();
+        this.createHints();
+    }
+
+    initializePlayer(){
+        this.player = new Player(200, 500, PlayerDirection.RIGHT);
+        this.visualizableElements.push(this.player);
     }
 
     retrieveMovableElements(){
@@ -77,5 +85,21 @@ export default class Game {
             if(value instanceof Skyscraper) skyscrapers.push(value);
         });
         return skyscrapers;
+    }
+
+    createHints(){
+        this.crateHint = new CrateHint("Press E for more information.");
+        this.visualizableElements.push(this.crateHint);
+        this.visualizableElements.forEach((value:Visualizable)=>{
+            if(value instanceof Skyscraper){
+                if(value.crate !== null){
+                    this.player.setCollisionListener(value.crate, (()=>{
+                        this.crateHint.expand();
+                    }).bind(this), (()=>{
+                        this.crateHint.close();
+                    }).bind(this));
+                }
+            }
+        });
     }
 }

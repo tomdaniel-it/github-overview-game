@@ -55,4 +55,20 @@ export default class Crate implements Visualizable, Expandable {
     getInformationObject(){
         return this.informationObject;
     }
+
+    getX(){
+        return this.x;
+    }
+
+    getY(){
+        return this.y;
+    }
+
+    getWidth(){
+        return this.width;
+    }
+
+    getHeight(){
+        return this.height;
+    }
 }

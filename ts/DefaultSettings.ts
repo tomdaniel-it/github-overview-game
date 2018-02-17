@@ -11,5 +11,6 @@ export let default_settings = {
         skyscraper_space_inbetween: 200,
         window_margin_horizontal: 100,
         crate_margin_right_of_edge: 50,
+        hint_color: "orange",
     }
 };
