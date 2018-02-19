@@ -56,6 +56,14 @@ export default class Screen {
         return this.canvas.height;
     }
 
+    getX(){
+        return 0;
+    }
+
+    getY(){
+        return 0;
+    }
+
     private createScreenResizeHandler(){
         window.onresize = this.updateScreenSize.bind(this);
     }
