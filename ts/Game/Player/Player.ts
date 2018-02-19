@@ -9,6 +9,7 @@ import ViewPort from "../ViewPort.js";
 import { default_settings } from "../../DefaultSettings.js";
 import Game from "../Game.js";
 import Solid from "../Solid.js";
+import {Direction} from "../Direction.js";
 
 export default class Player implements Visualizable, Movable {
     x:number;
@@ -128,17 +129,58 @@ export default class Player implements Visualizable, Movable {
         return this.height;
     }
 
-    isStandingOnSolid():boolean{
+    isTouchingSolid(direction:Direction|null=null):boolean{
         let result = false;
+
         Game.getInstance().getSolidElements().forEach(((value:Solid)=>{
-            let diff = this.y + this.height - value.getY();
-            diff = diff < 0 ? diff*-1 : diff;
-            if(diff < 1){
-                if(!(this.x > value.getX() + value.getWidth()) && !(this.x + this.width < value.getX())){
-                    result = true;
+            if(result) return;
+            let diff;
+            
+            //DOWN CHECK
+            if(direction === Direction.DOWN){
+                diff = Math.abs(this.y + this.height - value.getY());
+                if(diff < 1){
+                    if(!(this.x > value.getX() + value.getWidth()) && !(this.x + this.width < value.getX())){
+                        result = true;
+                    }
                 }
+                return;
+            }
+
+            //UP CHECK
+            if(direction === Direction.UP){
+                diff = Math.abs(this.y - value.getY() - value.getHeight());
+                if(diff < 1){
+                    if(!(this.x > value.getX() + value.getWidth()) && !(this.x + this.width < value.getX())){
+                        result = true;
+                    }
+                }
+                return;
+            }
+
+            //LEFT CHECK
+            if(direction === Direction.LEFT){
+                diff = Math.abs(this.x - value.getX() - value.getWidth());
+                if(diff < 1){
+                    if(!(this.y + this.height <= value.getY()) && !(this.y >= value.getY() + value.getHeight())){
+                        result = true;
+                    }
+                }
+                return;
+            }
+
+            //RIGHT CHECK
+            if(direction === Direction.RIGHT){
+                diff = Math.abs(value.getX() - this.x - this.getWidth());
+                if(diff < 1){
+                    if(!(this.y + this.height <= value.getY()) && !(this.y >= value.getY() + value.getHeight())){
+                        result = true;
+                    }
+                }
+                return;
             }
         }).bind(this));
+
         return result;
     }
 
@@ -154,5 +196,15 @@ export default class Player implements Visualizable, Movable {
             }
         }).bind(this));
         return result;
+    }
+
+    isOutOfScreen():boolean{
+        let screen = Screen.getInstance();
+
+        let outLeft = this.x + this.width < screen.getX() + screen.getViewPort().x; 
+        let outRight = this.x > screen.getX() + screen.getWidth() + screen.getViewPort().x;
+        let outTop = this.y + this.height < screen.getY();
+        let outBottom = this.y > screen.getY() + screen.getHeight();
+        return outLeft || outRight || outTop || outBottom;
     }
 }

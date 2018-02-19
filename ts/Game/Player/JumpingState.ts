@@ -5,6 +5,7 @@ import Timer from "../Timer.js";
 import { default_settings } from "../../DefaultSettings.js";
 import FallingState from "./FallingState.js";
 import Keyboard from "../Keyboard.js";
+import { Direction } from "../Direction.js";
 
 export default class JumpingState implements PlayerState {
     player:Player;
@@ -32,10 +33,23 @@ export default class JumpingState implements PlayerState {
                 break;
         }
 
-        this.player.x += speed_x;
-        this.player.y += this.player.speed_y;
+        for(let i=0;i<Math.abs(speed_x);i++){
+            if(direction === PlayerDirection.LEFT && this.player.isTouchingSolid(Direction.LEFT)) break;
+            if(direction === PlayerDirection.RIGHT && this.player.isTouchingSolid(Direction.RIGHT)) break;
+            this.player.x += (speed_x < 0 ? -1 : 1);
+        }
+
+
+        for(let i=0;i<Math.abs(this.player.speed_y);i++){
+            if(this.player.isTouchingSolid(Direction.UP)) break;
+            this.player.y += (this.player.speed_y < 0 ? -1 : 1);
+        }
+        this.player.speed_y += 0.25;
+
+
+        /*this.player.y += this.player.speed_y;
         
-        this.player.speed_y+=0.25;
+        this.player.speed_y+=0.25;*/
     }
 
     setStateChecker(){

@@ -62,7 +62,7 @@ export default class Game {
     }
 
     initializePlayer(){
-        this.player = new Player(200, 500, PlayerDirection.RIGHT);
+        this.player = new Player(default_settings.game.player_spawn_x, default_settings.game.player_spawn_y, PlayerDirection.RIGHT);
         this.visualizableElements.push(this.player);
     }
 

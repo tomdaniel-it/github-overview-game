@@ -5,6 +5,8 @@ import Timer from "../Timer.js";
 import { default_settings } from "../../DefaultSettings.js";
 import StandingState from "./StandingState.js";
 import Keyboard from "../Keyboard.js";
+import { Direction } from "../Direction.js";
+import DeadState from "./DeadState.js";
 
 export default class FallingState implements PlayerState {
     player:Player;
@@ -12,14 +14,11 @@ export default class FallingState implements PlayerState {
 
     constructor(player:Player){
         this.player = player;
-        this.player.speed_y = this.player.GRAVITY;
+        this.player.speed_y = 0;
         this.setStateChecker();
     }
 
     move(direction:PlayerDirection){
-        //MOVEMENT Y
-        if(this.player.speed_y !== default_settings.game.player_max_fall_speed)
-            this.player.speed_y += 0.25;
         
         //MOVEMENT X
         let speed_x = 0;
@@ -37,20 +36,21 @@ export default class FallingState implements PlayerState {
                 break;
         }
 
-        //CHECK Y
-        let standing = false;
-        if(this.player.isStandingOnSolid()){
-            standing = true;
-        }else{
-            for(let i=0;i<Math.abs(this.player.speed_y);i++){
-                this.player.y++;
-                if(this.player.isStandingOnSolid()){
-                    standing = true;
-                    break;
-                }
-            }
+        //MOVEMENT Y
+        this.player.speed_y += 0.25;
+        if(this.player.speed_y > default_settings.game.player_max_fall_speed) this.player.speed_y = default_settings.game.player_max_fall_speed;
+
+        for(let i=0;i<Math.abs(this.player.speed_y);i++){
+            if(this.player.isTouchingSolid(Direction.DOWN)) break;
+            this.player.y += (this.player.speed_y < 0 ? -1 : 1);
         }
-        this.player.x += speed_x;
+
+        //X
+        for(let i=0;i<Math.abs(speed_x);i++){
+            if(direction === PlayerDirection.LEFT && this.player.isTouchingSolid(Direction.LEFT)) break;
+            if(direction === PlayerDirection.RIGHT && this.player.isTouchingSolid(Direction.RIGHT)) break;
+            this.player.x += (speed_x < 0 ? -1 : 1);
+        }
     }
 
     setStateChecker(){
@@ -61,12 +61,17 @@ export default class FallingState implements PlayerState {
     checkState(){
 
         //CHECK FOR LANDING
-        if(this.player.isStandingOnSolid()){
+        if(this.player.isTouchingSolid(Direction.DOWN)){
             this.player.setState(new StandingState(this.player));
             this.stateChecker.stop();
             return;
         }
 
         //CHECK FOR DEAD STATE
+        if(this.player.isOutOfScreen()){
+            this.player.setState(new DeadState(this.player));
+            this.stateChecker.stop();
+            return;
+        }
     }
 }

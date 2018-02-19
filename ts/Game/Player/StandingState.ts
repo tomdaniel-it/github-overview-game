@@ -7,6 +7,7 @@ import Timer from "../Timer.js";
 import { default_settings } from "../../DefaultSettings.js";
 import Keyboard from "../Keyboard.js";
 import FallingState from "./FallingState.js";
+import { Direction } from "../Direction.js";
 
 export default class StandingState implements PlayerState {
     player:Player;
@@ -31,7 +32,7 @@ export default class StandingState implements PlayerState {
         let keyboard:Keyboard = Keyboard.getInstance();
 
         //CHECK IF IN AIR, IF SO => FALLING STATE
-        if(!this.player.isStandingOnSolid()){
+        if(!this.player.isTouchingSolid(Direction.DOWN)){
             this.player.setState(new FallingState(this.player));
             this.stateChecker.stop();
             return;

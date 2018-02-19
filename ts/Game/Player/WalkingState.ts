@@ -7,6 +7,7 @@ import { default_settings } from "../../DefaultSettings.js";
 import Keyboard from "../Keyboard.js";
 import StandingState from "./StandingState.js";
 import FallingState from "./FallingState.js";
+import { Direction } from "../Direction.js";
 
 export default class WalkingState implements PlayerState {
     player:Player;
@@ -34,7 +35,7 @@ export default class WalkingState implements PlayerState {
         }
 
         //CHECK IF IN AIR, IF SO => FALLING STATE
-        if(!this.player.isStandingOnSolid()){
+        if(!this.player.isTouchingSolid(Direction.DOWN)){
             this.player.setState(new FallingState(this.player));
             this.stateChecker.stop();
             return;
@@ -49,7 +50,7 @@ export default class WalkingState implements PlayerState {
     }
 
     move(direction:PlayerDirection){
-        let movement;
+        let movement = 0;
         switch(direction){
             case PlayerDirection.LEFT:
                 movement = -1*default_settings.game.player_walk_speed;
@@ -60,6 +61,10 @@ export default class WalkingState implements PlayerState {
             default:
                 return;
         }
-        this.player.x += movement;
+        for(let i=0;i<Math.abs(movement);i++){
+            if(direction === PlayerDirection.LEFT && this.player.isTouchingSolid(Direction.LEFT)) break;
+            if(direction === PlayerDirection.RIGHT && this.player.isTouchingSolid(Direction.RIGHT)) break;
+            this.player.x += (movement < 0 ? -1 : 1);
+        }
     }
 }
