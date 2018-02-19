@@ -19,7 +19,7 @@ export default class FallingState implements PlayerState {
     move(direction:PlayerDirection){
         //MOVEMENT Y
         if(this.player.speed_y !== default_settings.game.player_max_fall_speed)
-            this.player.speed_y += 1;
+            this.player.speed_y += 0.25;
         
         //MOVEMENT X
         let speed_x = 0;
@@ -41,12 +41,10 @@ export default class FallingState implements PlayerState {
         let standing = false;
         if(this.player.isStandingOnSolid()){
             standing = true;
-            console.log("first standing!");
         }else{
             for(let i=0;i<Math.abs(this.player.speed_y);i++){
                 this.player.y++;
                 if(this.player.isStandingOnSolid()){
-                    console.log("standing!");
                     standing = true;
                     break;
                 }

@@ -1,3 +1,6 @@
+import Game from "./Game.js";
+import { default_settings } from "../DefaultSettings.js";
+
 export default class Keyboard {
     private static uniqueInstance:Keyboard;
     private keysPresses:Map<String, boolean>;
@@ -36,6 +39,7 @@ export default class Keyboard {
                 this.keysPresses.set(key, true);
             }
         });
+        Game.getInstance().player.state.checkState();
     }
 
     private onKeyUp(e:KeyboardEvent){

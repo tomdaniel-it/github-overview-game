@@ -31,7 +31,7 @@ export default class Skyscraper implements Visualizable, Solid {
     }
 
     defineRandomSize(){
-        this.width = 200;
+        this.width = 300;
         this.height = 400;
         this.x = default_settings.game.window_margin_horizontal;
         this.y = Screen.getInstance().getHeight() - this.height;
@@ -43,7 +43,7 @@ export default class Skyscraper implements Visualizable, Solid {
             return;
         }
         let previousSkyscraper = <Skyscraper> this.previousSkyscraper;
-        this.width =200;
+        this.width = 300;
         let heightDifference = Math.floor(Math.random()*(default_settings.game.skyscraper_max_height_difference-default_settings.game.skyscraper_min_height_difference+1)+ default_settings.game.skyscraper_min_height_difference);
         heightDifference *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
         this.height = previousSkyscraper.height + heightDifference;

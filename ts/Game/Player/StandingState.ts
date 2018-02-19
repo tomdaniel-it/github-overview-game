@@ -29,9 +29,17 @@ export default class StandingState implements PlayerState {
 
     checkState(){
         let keyboard:Keyboard = Keyboard.getInstance();
+
         //CHECK IF IN AIR, IF SO => FALLING STATE
         if(!this.player.isStandingOnSolid()){
             this.player.setState(new FallingState(this.player));
+            this.stateChecker.stop();
+            return;
+        }
+
+        //CHECK IF JUMP KEY PRESSED, IF SO => JUMPING STATE
+        if(keyboard.isKeyDown("UP") || keyboard.isKeyDown("SPACE")){
+            this .player.setState(new JumpingState(this.player));
             this.stateChecker.stop();
             return;
         }
