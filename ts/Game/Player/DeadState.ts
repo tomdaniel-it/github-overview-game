@@ -4,6 +4,7 @@ import { PlayerDirection } from "./PlayerDirection.js";
 import Timer from "../Timer.js";
 import { default_settings } from "../../DefaultSettings.js";
 import StandingState from "./StandingState.js";
+import Game from "../Game.js";
 
 export default class DeadState implements PlayerState {
     player:Player;
@@ -11,8 +12,9 @@ export default class DeadState implements PlayerState {
 
     constructor(player:Player){
         this.player = player;
-        this.player.x = default_settings.game.player_spawn_x;
-        this.player.y = default_settings.game.player_spawn_y;
+        let spawnpoint = Game.getInstance().getPlayerSpawnpoint();
+        this.player.x = spawnpoint.x;
+        this.player.y = spawnpoint.y;
         this.checkState();
     }
 

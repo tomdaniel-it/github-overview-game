@@ -69,10 +69,12 @@ export default class Screen {
     }
 
     updateScreenSize(){
+        let widthDiff = window.innerWidth - this.canvas.width;
+        let heightDiff = window.innerHeight - this.canvas.height;
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.visualizableElements.forEach((value:Visualizable)=>{
-            value.redefinePosition();
+            value.redefinePosition(widthDiff, heightDiff);
         });
     }
 

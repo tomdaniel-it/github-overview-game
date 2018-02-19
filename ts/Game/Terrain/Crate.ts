@@ -48,8 +48,8 @@ export default class Crate implements Visualizable, Expandable {
 
     }
 
-    redefinePosition(){
-
+    redefinePosition(widthDiff:number, heightDiff:number){
+        this.initializePosition();
     }
 
     getInformationObject(){

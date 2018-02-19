@@ -10,6 +10,7 @@ import Skyscraper from "./Terrain/Skyscraper.js";
 import Hint from "./Hint/Hint.js";
 import CrateHint from "./Hint/CrateHint.js";
 import Solid from "./Solid.js";
+import Vector from "./Vector.js";
 
 export default class Game {
     static uniqueInstance:Game;
@@ -62,7 +63,7 @@ export default class Game {
     }
 
     initializePlayer(){
-        this.player = new Player(default_settings.game.player_spawn_x, default_settings.game.player_spawn_y, PlayerDirection.RIGHT);
+        this.player = new Player(this.getPlayerSpawnpoint(), PlayerDirection.RIGHT);
         this.visualizableElements.push(this.player);
     }
 
@@ -121,5 +122,14 @@ export default class Game {
             }
         });
         return arr;
+    }
+
+    getPlayerSpawnpoint():Vector{
+        let skyscraper = this.getSpawnSkyscraper();
+        return new Vector(skyscraper.x + 100, skyscraper.y - 100);
+    }
+
+    private getSpawnSkyscraper():Skyscraper{
+        return this.getSkyscrapers()[0];
     }
 }

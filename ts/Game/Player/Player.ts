@@ -10,6 +10,7 @@ import { default_settings } from "../../DefaultSettings.js";
 import Game from "../Game.js";
 import Solid from "../Solid.js";
 import {Direction} from "../Direction.js";
+import Vector from "../Vector.js";
 
 export default class Player implements Visualizable, Movable {
     x:number;
@@ -25,10 +26,10 @@ export default class Player implements Visualizable, Movable {
     GRAVITY:number;
     speed_y:number;
 
-    constructor(x:number, y:number, direction:PlayerDirection=PlayerDirection.RIGHT){
+    constructor(spawnLocation:Vector, direction:PlayerDirection=PlayerDirection.RIGHT){
         this.JUMP_FORCE = default_settings.game.player_jump_force;
         this.GRAVITY = default_settings.game.player_gravity;
-        this.setLocation(x, y);
+        this.setLocation(spawnLocation.x, spawnLocation.y);
         this.initializeState();
         this.setDirection(direction);
         this.initializeDimensions();
@@ -85,8 +86,8 @@ export default class Player implements Visualizable, Movable {
         context.fill();
     }
 
-    redefinePosition(){
-
+    redefinePosition(widthDiff:number, heightDiff:number){
+        this.y += heightDiff;
     }
 
     setCollisionListener(element:Visualizable, onCollision:Function, onRelease:Function){

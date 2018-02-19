@@ -60,8 +60,9 @@ export default class Skyscraper implements Visualizable, Solid {
         if(this.crate !== null) this.crate.draw(context);
     }
 
-    redefinePosition(){
+    redefinePosition(widthDiff:number, heightDiff:number){
         this.y = Screen.getInstance().getHeight() - this.height;
+        if(this.crate !== null) this.crate.redefinePosition(widthDiff, heightDiff);
     }
 
     private defineColor() {
