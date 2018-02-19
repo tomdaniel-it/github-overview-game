@@ -1,3 +1,3 @@
 import Game from "./Game/Game.js";
-let game:Game = new Game();
+let game:Game = Game.getInstance();
 game.start();

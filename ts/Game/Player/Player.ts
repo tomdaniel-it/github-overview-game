@@ -7,6 +7,8 @@ import Keyboard from "../Keyboard.js";
 import Screen from "../Screen.js";
 import ViewPort from "../ViewPort.js";
 import { default_settings } from "../../DefaultSettings.js";
+import Game from "../Game.js";
+import Solid from "../Solid.js";
 
 export default class Player implements Visualizable, Movable {
     x:number;
@@ -18,12 +20,23 @@ export default class Player implements Visualizable, Movable {
     viewPort:ViewPort;
     collidingElements:Array<Visualizable>;
 
+    JUMP_FORCE:number;
+    GRAVITY:number;
+    speed_y:number;
+
     constructor(x:number, y:number, direction:PlayerDirection=PlayerDirection.RIGHT){
+        this.JUMP_FORCE = default_settings.game.player_jump_force;
+        this.GRAVITY = default_settings.game.player_gravity;
         this.setLocation(x, y);
         this.initializeState();
         this.setDirection(direction);
         this.initializeDimensions();
         this.collidingElements = new Array<Visualizable>();
+        this.initializeSpeedY();
+    }
+
+    initializeSpeedY(){
+        this.speed_y = -this.GRAVITY;
     }
 
     setLocation(x:number, y:number){
@@ -59,6 +72,7 @@ export default class Player implements Visualizable, Movable {
     }
 
     move(){
+        this.defineDirection();
         this.state.move(this.direction);
     }
 
@@ -112,5 +126,33 @@ export default class Player implements Visualizable, Movable {
 
     getHeight(){
         return this.height;
+    }
+
+    isStandingOnSolid():boolean{
+        let result = false;
+        Game.getInstance().getSolidElements().forEach(((value:Solid)=>{
+            let diff = this.y + this.height - value.getY();
+            diff = diff < 0 ? diff*-1 : diff;
+            if(diff < 1){
+                if(!(this.x > value.getX() + value.getWidth()) && !(this.x + this.width < value.getX())){
+                    result = true;
+                }
+            }
+        }).bind(this));
+        return result;
+    }
+
+    getFloor():Solid|null{
+        let result:Solid|null = null;
+        Game.getInstance().getSolidElements().forEach(((value:Solid)=>{
+            let diff = this.y + this.height - value.getY();
+            diff = diff < 0 ? diff*-1 : diff;
+            if(diff < 1){
+                if(!(this.x > value.getX() + value.getWidth()) && !(this.x + this.width < value.getX())){
+                    result = value;
+                }
+            }
+        }).bind(this));
+        return result;
     }
 }

@@ -6,9 +6,11 @@ import Timer from "../Timer.js";
 import { default_settings } from "../../DefaultSettings.js";
 import Keyboard from "../Keyboard.js";
 import StandingState from "./StandingState.js";
+import FallingState from "./FallingState.js";
 
 export default class WalkingState implements PlayerState {
     player:Player;
+    stateChecker:Timer;
 
     constructor(player:Player){
         this.player = player;
@@ -16,27 +18,36 @@ export default class WalkingState implements PlayerState {
         this.setStateChecker();
     }
 
-    private setStateChecker(){
-        let timer:Timer = new Timer(()=>{
-            let keyboard:Keyboard = Keyboard.getInstance();
-            if((!keyboard.isKeyDown("LEFT") && !keyboard.isKeyDown("RIGHT")) || (keyboard.isKeyDown("LEFT") && keyboard.isKeyDown("RIGHT"))){
-                this.player.setState(new StandingState(this.player));
-                timer.stop();
-            }else{
-                this.player.defineDirection();
-            }
-        }, 1000/default_settings.game.frame_rate);
-        timer.start();
+    setStateChecker(){
+        this.stateChecker = new Timer(this.checkState.bind(this), 1000/default_settings.game.frame_rate);
+        this.stateChecker.start();
+    }
+
+    checkState(){
+        let keyboard:Keyboard = Keyboard.getInstance();
+
+        //CHECK IF IN AIR, IF SO => FALLING STATE
+        if(!this.player.isStandingOnSolid()){
+            this.player.setState(new FallingState(this.player));
+            this.stateChecker.stop();
+            return;
+        }
+
+        //CHECK IF NOT MOVING, IF SO WALKING STATE
+        if((!keyboard.isKeyDown("LEFT") && !keyboard.isKeyDown("RIGHT")) || (keyboard.isKeyDown("LEFT") && keyboard.isKeyDown("RIGHT"))){
+            this.player.setState(new StandingState(this.player));
+            this.stateChecker.stop();
+        }
     }
 
     move(direction:PlayerDirection){
         let movement;
         switch(direction){
             case PlayerDirection.LEFT:
-                movement = -10;
+                movement = -1*default_settings.game.player_walk_speed;
                 break;
             case PlayerDirection.RIGHT:
-                movement = 10;
+                movement = default_settings.game.player_walk_speed;
                 break;
             default:
                 return;

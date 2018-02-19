@@ -12,5 +12,9 @@ export let default_settings = {
         window_margin_horizontal: 100,
         crate_margin_right_of_edge: 50,
         hint_color: "orange",
+        player_jump_force:10,
+        player_gravity: 2,
+        player_max_fall_speed: 15,
+        player_walk_speed: 5,
     }
 };

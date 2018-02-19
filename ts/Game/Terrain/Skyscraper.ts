@@ -88,4 +88,8 @@ export default class Skyscraper implements Visualizable, Solid {
     getHeight(){
         return this.height;
     }
+
+    isSolid(){
+        return true;
+    }
 }

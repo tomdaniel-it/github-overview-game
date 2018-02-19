@@ -9,8 +9,11 @@ import TerrainBuilder from "./TerrainBuilder.js";
 import Skyscraper from "./Terrain/Skyscraper.js";
 import Hint from "./Hint/Hint.js";
 import CrateHint from "./Hint/CrateHint.js";
+import Solid from "./Solid.js";
 
 export default class Game {
+    static uniqueInstance:Game;
+
     canvas:HTMLCanvasElement;
     context:CanvasRenderingContext2D;
     timer:Timer;
@@ -21,7 +24,7 @@ export default class Game {
     terrainBuilder:TerrainBuilder;
     crateHint:CrateHint;
 
-    constructor(){
+    private constructor(){
         this.canvas = <HTMLCanvasElement> document.querySelector("canvas");
         this.context = <CanvasRenderingContext2D> this.canvas.getContext("2d");
         this.screen = Screen.getInstance(this.context, this.canvas);
@@ -29,6 +32,13 @@ export default class Game {
         this.screen.updateVisualizableElements(this.visualizableElements);
         this.retrieveMovableElements();
         this.createMovementLoop();
+    }
+
+    public static getInstance():Game{
+        if(this.uniqueInstance === null || this.uniqueInstance === undefined){
+            this.uniqueInstance = new Game();
+        }
+        return this.uniqueInstance;
     }
 
     start(){
@@ -101,5 +111,15 @@ export default class Game {
                 }
             }
         });
+    }
+
+    getSolidElements():Array<Solid>{
+        let arr = new Array<Solid>();
+        this.visualizableElements.forEach((value:Visualizable)=>{
+            if(typeof (<Solid> value).isSolid === 'function'){
+                arr.push(<Solid> value);
+            }
+        });
+        return arr;
     }
 }
