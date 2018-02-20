@@ -1,15 +1,18 @@
 import Game from "./Game.js";
 import { default_settings } from "../DefaultSettings.js";
+import KeyListener from "./KeyListener.js";
 
 export default class Keyboard {
     private static uniqueInstance:Keyboard;
     private keysPresses:Map<String, boolean>;
     private keys:Map<String, number>;
+    private keyListeners:Array<KeyListener>;
 
     private constructor(){
         this.initializeKeys();
         this.initializeKeyPresses();
         this.setKeyListeners();
+        this.keyListeners = new Array<KeyListener>();
     }
 
     private initializeKeys(){
@@ -19,6 +22,7 @@ export default class Keyboard {
         this.keys.set("UP", 38);
         this.keys.set("RIGHT", 39);
         this.keys.set("DOWN", 40);
+        this.keys.set("e", 69);
     }
 
     private initializeKeyPresses(){
@@ -35,6 +39,9 @@ export default class Keyboard {
 
     private onKeyDown(e:KeyboardEvent){
         this.keys.forEach((value:number, key:String)=>{
+            this.keyListeners.forEach((keyListener:KeyListener)=>{
+                if(e.keyCode === value && key === keyListener.key) keyListener.callback();
+            });
             if(value === e.keyCode){
                 this.keysPresses.set(key, true);
             }
@@ -70,5 +77,9 @@ export default class Keyboard {
             if(value) count++;
         });
         return count;
+    }
+
+    addKeyListener(keyListener:KeyListener){
+        this.keyListeners.push(keyListener);
     }
 }

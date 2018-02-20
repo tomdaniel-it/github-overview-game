@@ -7,6 +7,8 @@ import ViewPort from "../ViewPort.js";
 import Screen from "../Screen.js";
 import CrateHint from "../Hint/CrateHint.js";
 import Game from "../Game.js";
+import Keyboard from "../Keyboard.js";
+import KeyListener from "../KeyListener.js";
 
 export default class Crate implements Visualizable, Expandable {
     x:number;
@@ -37,6 +39,59 @@ export default class Crate implements Visualizable, Expandable {
         this.height = 45;
         this.initializeSprite();
         setTimeout(this.initializeCrateHint.bind(this), 1);
+        this.setKeyListener();
+    }
+
+    setKeyListener(){
+        Keyboard.getInstance().addKeyListener(new KeyListener("e", (()=>{
+            if(Game.getInstance().player.collidingElements.indexOf(this) !== -1){
+                if(this.transforming) return;
+                Game.getInstance().getCrates().forEach(((crate:Crate)=>{
+                    if(crate === this){
+                        return;
+                    }
+                    if(crate.transforming && !crate.opened){
+                        crate.close();
+                    }
+                    if(crate.opened && !crate.transforming){
+                        crate.close();
+                    }
+                }).bind(this));
+                if(this.opened){
+                    //CLOSING
+                    this.setTransformation();
+                }else{
+                    //OPENING
+                    this.setTransformation();
+                }
+            }
+        }).bind(this)));
+    }
+
+    setTransformation(){
+        this.transforming = true;
+        setTimeout((()=>{
+            if(this.opened){
+                //CLOSING
+                this.transformation--;
+                if(this.transformation === 0){
+                    //Transformation done
+                    this.transforming = false;
+                    this.opened = false;
+                }
+            }else{
+                //OPENING
+                this.transformation++;
+                if(this.transformation === 3){
+                    //Transformation done
+                    this.transforming = false;
+                    this.opened = true;
+                }
+            }
+
+            if(this.transforming)
+                this.setTransformation();
+        }).bind(this), 100);
     }
 
     initializeCrateHint(){
@@ -69,18 +124,30 @@ export default class Crate implements Visualizable, Expandable {
         if(!this.spriteLoaded) return;
         if(this.viewPort === null || this.viewPort === undefined) this.viewPort = Screen.getInstance().getViewPort();
         context.beginPath();
-        context.drawImage(this.sprite, 0, 0, this.sprite.width/4, this.sprite.height, this.viewPort.calculateX(this.x), this.y, this.width, this.height);
+        let spriteWidth = this.sprite.width / 4;
+        context.drawImage(this.sprite, this.transformation*spriteWidth, 0, spriteWidth, this.sprite.height, this.viewPort.calculateX(this.x), this.y, this.width, this.height);
 
         this.crateHint.draw(context);
 
     }
 
     expand(){
-
+        if(this.transforming){
+            return;
+        }else{
+            if(this.opened) return;
+            this.setTransformation();
+        }
     }
 
     close(){
-
+        if(this.transforming){
+            if(this.opened) return;
+            this.opened = true;
+        }else{
+            if(!this.opened) return;
+            this.setTransformation();
+        }
     }
 
     redefinePosition(widthDiff:number, heightDiff:number){

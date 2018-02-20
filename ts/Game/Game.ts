@@ -11,6 +11,7 @@ import Hint from "./Hint/Hint.js";
 import CrateHint from "./Hint/CrateHint.js";
 import Solid from "./Solid.js";
 import Vector from "./Vector.js";
+import Crate from "./Terrain/Crate.js";
 
 export default class Game {
     static uniqueInstance:Game;
@@ -95,6 +96,14 @@ export default class Game {
             if(value instanceof Skyscraper) skyscrapers.push(value);
         });
         return skyscrapers;
+    }
+
+    getCrates():Array<Crate>{
+        let crates = new Array<Crate>();
+        this.getSkyscrapers().forEach((skyscraper:Skyscraper)=>{
+            if(skyscraper.crate !== null) crates.push(skyscraper.crate);
+        });
+        return crates;
     }
 
     getSolidElements():Array<Solid>{
