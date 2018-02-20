@@ -59,7 +59,6 @@ export default class Game {
         this.terrainBuilder.build();
         this.visualizableElements = this.visualizableElements.concat(this.terrainBuilder.getTerrainElements());
         this.initializePlayer();
-        this.createHints();
     }
 
     initializePlayer(){
@@ -96,22 +95,6 @@ export default class Game {
             if(value instanceof Skyscraper) skyscrapers.push(value);
         });
         return skyscrapers;
-    }
-
-    createHints(){
-        this.crateHint = new CrateHint("Press E for more information.");
-        this.visualizableElements.push(this.crateHint);
-        this.visualizableElements.forEach((value:Visualizable)=>{
-            if(value instanceof Skyscraper){
-                if(value.crate !== null){
-                    this.player.setCollisionListener(value.crate, (()=>{
-                        this.crateHint.expand();
-                    }).bind(this), (()=>{
-                        this.crateHint.close();
-                    }).bind(this));
-                }
-            }
-        });
     }
 
     getSolidElements():Array<Solid>{
