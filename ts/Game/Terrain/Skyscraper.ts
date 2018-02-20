@@ -7,6 +7,7 @@ import { default_settings } from "../../DefaultSettings.js";
 import ViewPort from "../ViewPort.js";
 
 export default class Skyscraper implements Visualizable, Solid {
+    id:number;
     x:number;
     y:number;
     width:number;
@@ -15,9 +16,12 @@ export default class Skyscraper implements Visualizable, Solid {
     previousSkyscraper:Skyscraper|null;
     color:String;
     viewPort:ViewPort;
+    sprite:HTMLImageElement;
+    spriteLoaded:boolean;
 
     constructor(previousSkyscraper:Skyscraper|null=null, crate:Crate|null=null){
         this.previousSkyscraper = previousSkyscraper;
+        this.setId();
         if(this.previousSkyscraper === null){
             //First skyscraper
             this.defineRandomSize();
@@ -25,9 +29,22 @@ export default class Skyscraper implements Visualizable, Solid {
             //Define x, y, width, height based on previous skyscraper so player can jump back and forth
             this.defineSize();
         }
-        this.defineColor();
+        this.spriteLoaded = false;
+        this.defineSprite();
         this.crate = crate;
         if(this.crate !== null) this.crate.setSkyscraper(this);
+    }
+
+    private setId():void{
+        if(this.previousSkyscraper === null){
+            this.id = 1;
+        }else{
+            this.id = this.previousSkyscraper.getId() + 1;
+        }
+    }
+
+    getId():number{
+        return this.id;
     }
 
     defineRandomSize(){
@@ -52,11 +69,10 @@ export default class Skyscraper implements Visualizable, Solid {
     }
 
     draw(context:CanvasRenderingContext2D){
+        if(!this.spriteLoaded) return;
         if(this.viewPort === null || this.viewPort === undefined) this.viewPort = Screen.getInstance().getViewPort();
         context.beginPath();
-        context.rect(this.viewPort.calculateX(this.x), this.y, this.width, this.height);
-        context.fillStyle = <string> this.color;
-        context.fill();
+        context.drawImage(this.sprite, 0, 0, this.sprite.width, (this.height/(this.width/this.sprite.width)>this.sprite.height?this.sprite.height:this.height/(this.width/this.sprite.width)), this.viewPort.calculateX(this.x), this.y, this.width, this.height);
         if(this.crate !== null) this.crate.draw(context);
     }
 
@@ -65,13 +81,10 @@ export default class Skyscraper implements Visualizable, Solid {
         if(this.crate !== null) this.crate.redefinePosition(widthDiff, heightDiff);
     }
 
-    private defineColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)];
-        }
-        this.color = color;
+    private defineSprite() {
+        this.sprite = new Image();
+        this.sprite.src = "Images/Skyscraper/skyscraper" + (this.id%default_settings.images.skyscraper_amount) + ".png";
+        this.sprite.onload = (() => { this.spriteLoaded = true; }).bind(this);
     }
 
     getX(){

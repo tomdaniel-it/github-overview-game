@@ -16,5 +16,8 @@ export let default_settings = {
         player_gravity: 2,
         player_max_fall_speed: 10,
         player_walk_speed: 3,
+    },
+    images: {
+        skyscraper_amount: 7,
     }
 };
