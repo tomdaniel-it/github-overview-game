@@ -10,14 +10,17 @@ import { Direction } from "../Direction.js";
 export default class JumpingState implements PlayerState {
     player:Player;
     stateChecker:Timer;
+    speed_y_initialized:boolean = false;
 
     constructor(player:Player){
         this.player = player;
         this.player.speed_y = -default_settings.game.player_jump_force;
+        this.speed_y_initialized = true;
         this.setStateChecker();
     }
 
     move(direction:PlayerDirection){
+        if(!this.speed_y_initialized) return;
         let speed_x = 0;
         let keyboard = Keyboard.getInstance();
         switch(direction){
@@ -42,14 +45,9 @@ export default class JumpingState implements PlayerState {
 
         for(let i=0;i<Math.abs(this.player.speed_y);i++){
             if(this.player.isTouchingSolid(Direction.UP)) break;
-            this.player.y += (this.player.speed_y < 0 ? -1 : 1);
+            this.player.y += -1;
         }
         this.player.speed_y += 0.25;
-
-
-        /*this.player.y += this.player.speed_y;
-        
-        this.player.speed_y+=0.25;*/
     }
 
     setStateChecker(){
