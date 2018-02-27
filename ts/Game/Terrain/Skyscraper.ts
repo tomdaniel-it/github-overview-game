@@ -5,6 +5,7 @@ import Expandable from "../Expandable.js";
 import Crate from "./Crate.js";
 import { default_settings } from "../../DefaultSettings.js";
 import ViewPort from "../ViewPort.js";
+import Billboard from "./Billboard.js";
 
 export default class Skyscraper implements Visualizable, Solid {
     id:number;
@@ -13,13 +14,14 @@ export default class Skyscraper implements Visualizable, Solid {
     width:number;
     height:number;
     crate:Crate|null;
+    billboard:Billboard|null;
     previousSkyscraper:Skyscraper|null;
     color:String;
     viewPort:ViewPort;
     sprite:HTMLImageElement;
     spriteLoaded:boolean;
 
-    constructor(previousSkyscraper:Skyscraper|null=null, crate:Crate|null=null){
+    constructor(previousSkyscraper:Skyscraper|null=null, crate:Crate|null=null, billboard:Billboard|null=null){
         this.previousSkyscraper = previousSkyscraper;
         this.setId();
         if(this.previousSkyscraper === null){
@@ -32,7 +34,9 @@ export default class Skyscraper implements Visualizable, Solid {
         this.spriteLoaded = false;
         this.defineSprite();
         this.crate = crate;
+        this.billboard = billboard;
         if(this.crate !== null) this.crate.setSkyscraper(this);
+        if(this.billboard !== null) this.billboard.setSkyscraper(this);
     }
 
     private setId():void{
@@ -74,6 +78,7 @@ export default class Skyscraper implements Visualizable, Solid {
         context.beginPath();
         context.drawImage(this.sprite, 0, 0, this.sprite.width, (this.height/(this.width/this.sprite.width)>this.sprite.height?this.sprite.height:this.height/(this.width/this.sprite.width)), this.viewPort.calculateX(this.x), this.y, this.width, this.height);
         if(this.crate !== null) this.crate.draw(context);
+        if(this.billboard !== null) this.billboard.draw(context);
     }
 
     redefinePosition(widthDiff:number, heightDiff:number){

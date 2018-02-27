@@ -4,6 +4,7 @@ import Biography from "../Biography.js";
 import Crate from "./Terrain/Crate.js";
 import GitHubManager from "../GitHub/GitHubManager.js";
 import Project from "../Project.js";
+import Billboard from "./Terrain/Billboard.js";
 
 export default class TerrainBuilder {
     visualizableElements:Array<Visualizable>;
@@ -32,18 +33,18 @@ export default class TerrainBuilder {
     createBiographySkyscrapers(){
         let aboutMe = new Biography("About me");
         aboutMe.setDescription("I am an IT student lorum ipsum this is a place holder. This should also jump automatically to a new line so I'm just keeping on writing text until I think it's enough. I'm 20 years old (which should be generated from my birthdate so no automatic updates are needed!). Alright enough now.");
-        this.skyscrapers.push(new Skyscraper(this.getLastSkyscraper(),new Crate(aboutMe)));
+        this.skyscrapers.push(new Skyscraper(this.getLastSkyscraper(),new Crate(aboutMe), new Billboard(aboutMe)));
 
         let anotherOne = new Biography("Another BIO");
         anotherOne.setDescription("This is a short second biography. To be created...");
-        this.skyscrapers.push(new Skyscraper(this.getLastSkyscraper(), new Crate(anotherOne)));
+        this.skyscrapers.push(new Skyscraper(this.getLastSkyscraper(), new Crate(anotherOne), new Billboard(anotherOne)));
     }
 
     createProjectSkyscrapers(){
         let manager = new GitHubManager();
         let projects:Array<Project> = manager.getProjects();
         projects.forEach(((value:Project)=>{
-            this.skyscrapers.push(new Skyscraper(this.getLastSkyscraper(), new Crate(value)));
+            this.skyscrapers.push(new Skyscraper(this.getLastSkyscraper(), new Crate(value), new Billboard(value)));
         }).bind(this));
     }
 
