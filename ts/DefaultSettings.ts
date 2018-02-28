@@ -30,6 +30,7 @@ export let default_settings = {
             starting_pos_margin_from_screen: 50,
             sprite_change_delay: 50,
             speed: 2,
+            title_color: "black",
         },
     },
     images: {
