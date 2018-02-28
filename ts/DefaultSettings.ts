@@ -16,6 +16,14 @@ export let default_settings = {
         player_gravity: 2,
         player_max_fall_speed: 10,
         player_walk_speed: 3,
+        billboard: {
+            letter_move_speed: 20,
+            letter_distance: 3,
+            letter_space_width: 15,
+            letter_height: 30,
+            letter_start_margin: 20,
+            letter_repeat_loop_margin: 80,
+        },
     },
     images: {
         skyscraper_amount: 7,

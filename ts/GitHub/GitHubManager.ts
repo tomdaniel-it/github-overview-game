@@ -33,10 +33,7 @@ export default class GitHubManager {
             this.projects[i].image_url = response.image_url;
         }
         let tmp = new Array<Project>();
-        console.log(this.projects.length);
         for(let i=0;i<this.projects.length;i++){
-            console.log(this.projects[i].description.trim().length);
-            console.log(this.projects[i].description);
             if(this.projects[i].description.trim().length !== 0){
                 tmp.push(this.projects[i]);
             }
@@ -50,8 +47,6 @@ export default class GitHubManager {
     }
 
     getProjects():Array<Project>{
-        console.log(this.projects);
-        console.log("CHECKING");
         return this.projects;
     }
 }

@@ -4,6 +4,7 @@ import Skyscraper from "./Skyscraper.js";
 import ViewPort from "../ViewPort.js";
 import Screen from "../Screen.js";
 import BillboardLetter from "./BIllboardLetter.js";
+import { default_settings } from "../../DefaultSettings.js";
 
 export default class Billboard implements Visualizable {
     x:number;
@@ -26,6 +27,13 @@ export default class Billboard implements Visualizable {
     private defineLetters(){
         this.informationObject.getTitle().split("").forEach((value:string, index:number)=>{
             this.billboard_letters.push(new BillboardLetter(index, value, this));
+        });
+        setTimeout((()=>{setInterval(this.moveLetters.bind(this), default_settings.game.billboard.letter_move_speed);}).bind(this), 500);
+    }
+
+    private moveLetters(){
+        this.billboard_letters.forEach((letter:BillboardLetter)=>{
+            letter.move();
         });
     }
 
@@ -82,14 +90,14 @@ export default class Billboard implements Visualizable {
         return this.height;
     }
 
-    getPreviousLetter(letter:BillboardLetter):BillboardLetter|null {
-        if(letter.id === 0) return null;
+    getPreviousLetter(letter:BillboardLetter, inCircle:boolean=false):BillboardLetter|null {
+        if(letter.id === 0 && !inCircle) return null;
         let result:BillboardLetter|null = null;
         this.billboard_letters.forEach((value:BillboardLetter)=>{
             if(value.id === letter.id - 1){
                 result = value;
             }
         });
-        return result;
+        return !inCircle ? result : (result === null ? this.billboard_letters[this.billboard_letters.length-1] : result);
     }
 }
