@@ -5,6 +5,7 @@ import ViewPort from "../ViewPort.js";
 import Screen from "../Screen.js";
 import BillboardLetter from "./BIllboardLetter.js";
 import { default_settings } from "../../DefaultSettings.js";
+import Movable from "../Movable.js";
 
 export default class Billboard implements Visualizable {
     x:number;
@@ -28,7 +29,7 @@ export default class Billboard implements Visualizable {
         this.informationObject.getTitle().split("").forEach((value:string, index:number)=>{
             this.billboard_letters.push(new BillboardLetter(index, value, this));
         });
-        setTimeout((()=>{setInterval(this.moveLetters.bind(this), default_settings.game.billboard.letter_move_speed);}).bind(this), 500);
+        //setTimeout((()=>{setInterval(this.moveLetters.bind(this), default_settings.game.billboard.letter_move_speed);}).bind(this), 500);
     }
 
     private moveLetters(){
@@ -99,5 +100,11 @@ export default class Billboard implements Visualizable {
             }
         });
         return !inCircle ? result : (result === null ? this.billboard_letters[this.billboard_letters.length-1] : result);
+    }
+
+    getMovableElements():Array<Movable>{
+        let result = new Array<Movable>();
+        this.billboard_letters.forEach((letter:BillboardLetter)=>{ result.push(<Movable> letter) });
+        return result;
     }
 }

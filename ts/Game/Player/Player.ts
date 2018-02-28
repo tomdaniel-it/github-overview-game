@@ -208,4 +208,8 @@ export default class Player implements Visualizable, Movable {
         let outBottom = this.y > screen.getY() + screen.getHeight();
         return outLeft || outRight || outTop || outBottom;
     }
+
+    getMovableElements(){
+        return new Array<Movable>();
+    }
 }

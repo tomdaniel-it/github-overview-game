@@ -76,6 +76,7 @@ export default class Game {
                     this.movableElements.push(obj);
                 }
             }catch(e){}
+            value.getMovableElements().forEach(((value:Movable)=>{ this.movableElements.push(value); }).bind(this));
         });
     }
 
@@ -123,5 +124,9 @@ export default class Game {
 
     private getSpawnSkyscraper():Skyscraper{
         return this.getSkyscrapers()[0];
+    }
+
+    getWidth(){
+        return this.screen.getMaxTotalWidth(this.getSkyscrapers());
     }
 }

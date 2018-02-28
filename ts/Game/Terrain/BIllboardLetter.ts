@@ -79,7 +79,7 @@ export default class BillboardLetter implements Visualizable, Movable {
     }
 
     move(){
-        this.x--;
+        this.x -= default_settings.game.billboard.letter_move_speed;
         if(this.x + this.width < this.billboard.x + this.billboard.border_size){
             let previousLetter = (<BillboardLetter>this.billboard.getPreviousLetter(this, true));
             this.x = previousLetter.x + previousLetter.width + (this.id === 0 ? default_settings.game.billboard.letter_repeat_loop_margin : default_settings.game.billboard.letter_distance);
@@ -108,5 +108,9 @@ export default class BillboardLetter implements Visualizable, Movable {
 
     equals(otherLetter:BillboardLetter):boolean{
         return this.id === otherLetter.id;
+    }
+
+    getMovableElements(){
+        return new Array<Movable>();
     }
 }

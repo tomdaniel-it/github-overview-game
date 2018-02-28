@@ -17,12 +17,19 @@ export let default_settings = {
         player_max_fall_speed: 10,
         player_walk_speed: 3,
         billboard: {
-            letter_move_speed: 20,
-            letter_distance: 3,
-            letter_space_width: 15,
-            letter_height: 30,
+            letter_move_speed: 1,
+            letter_distance: 2,
+            letter_space_width: 10,
+            letter_height: 25,
             letter_start_margin: 20,
             letter_repeat_loop_margin: 80,
+        },
+        plane: {
+            margin_top: 60,
+            height: 200,
+            starting_pos_margin_from_screen: 50,
+            sprite_change_delay: 50,
+            speed: 2,
         },
     },
     images: {

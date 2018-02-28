@@ -1,5 +1,6 @@
 import Visualizable from "../Visualizable.js";
 import Expandable from "../Expandable.js";
+import Movable from "../Movable.js";
 
 export default abstract class Hint implements Visualizable, Expandable {
     description:String;
@@ -50,5 +51,9 @@ export default abstract class Hint implements Visualizable, Expandable {
 
     getHeight(){
         return this.height;
+    }
+
+    getMovableElements(){
+        return new Array<Movable>();
     }
 }

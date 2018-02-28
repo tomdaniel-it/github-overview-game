@@ -9,6 +9,8 @@ import CrateHint from "../Hint/CrateHint.js";
 import Game from "../Game.js";
 import Keyboard from "../Keyboard.js";
 import KeyListener from "../KeyListener.js";
+import Plane from "./Plane.js";
+import Movable from "../Movable.js";
 
 export default class Crate implements Visualizable, Expandable {
     x:number;
@@ -29,12 +31,15 @@ export default class Crate implements Visualizable, Expandable {
 
     informationObject:InformationObject;
 
+    plane:Plane;
+
     constructor(informationObject:InformationObject){
         this.spriteLoaded = false;
         this.transformation = 0;
         this.transforming = false;
         this.opened = false;
         this.informationObject = informationObject;
+        this.plane = new Plane(informationObject);
         this.width = 60;
         this.height = 45;
         this.initializeSprite();
@@ -59,9 +64,11 @@ export default class Crate implements Visualizable, Expandable {
                 }).bind(this));
                 if(this.opened){
                     //CLOSING
+                    this.plane.close();
                     this.setTransformation();
                 }else{
                     //OPENING
+                    this.plane.expand();
                     this.setTransformation();
                 }
             }
@@ -128,7 +135,7 @@ export default class Crate implements Visualizable, Expandable {
         context.drawImage(this.sprite, this.transformation*spriteWidth, 0, spriteWidth, this.sprite.height, this.viewPort.calculateX(this.x), this.y, this.width, this.height);
 
         this.crateHint.draw(context);
-
+        this.plane.draw(context);
     }
 
     expand(){
@@ -136,6 +143,7 @@ export default class Crate implements Visualizable, Expandable {
             return;
         }else{
             if(this.opened) return;
+            this.plane.expand();
             this.setTransformation();
         }
     }
@@ -144,9 +152,11 @@ export default class Crate implements Visualizable, Expandable {
         if(this.transforming){
             if(this.opened) return;
             this.opened = true;
+            this.plane.close();
         }else{
             if(!this.opened) return;
             this.setTransformation();
+            this.plane.close();
         }
     }
 
@@ -172,5 +182,11 @@ export default class Crate implements Visualizable, Expandable {
 
     getHeight(){
         return this.height;
+    }
+
+    getMovableElements():Array<Movable>{
+        let result = new Array<Movable>();
+        result.push(<Movable>this.plane);
+        return result;
     }
 }

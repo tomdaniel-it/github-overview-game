@@ -37,7 +37,7 @@ export default class Screen {
     draw(elements:Array<Visualizable>):void{
         this.context.beginPath();
         this.context.rect(0,0,this.canvas.width, this.canvas.height);
-        this.context.fillStyle = "black";
+        this.context.fillStyle = "lightblue";
         this.context.fill();
         for(let i=0;i<elements.length;i++){
             elements[i].draw(this.context);
@@ -79,13 +79,17 @@ export default class Screen {
     }
 
     updateViewPort(player:Player, skyscrapers:Array<Skyscraper>){
+        this.viewPort.update(player, this.getMaxTotalWidth(skyscrapers));
+    }
+
+    getMaxTotalWidth(skyscrapers:Array<Skyscraper>){
         let max_x = this.getWidth();
         skyscrapers.forEach((value:Skyscraper)=>{
             if(value.x + value.width + default_settings.game.window_margin_horizontal > max_x){
                 max_x = value.x + value.width + default_settings.game.window_margin_horizontal;
             }
         });
-        this.viewPort.update(player, max_x);
+        return max_x;
     }
 
     getViewPort(){

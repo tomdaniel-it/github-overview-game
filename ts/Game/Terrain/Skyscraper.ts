@@ -6,6 +6,7 @@ import Crate from "./Crate.js";
 import { default_settings } from "../../DefaultSettings.js";
 import ViewPort from "../ViewPort.js";
 import Billboard from "./Billboard.js";
+import Movable from "../Movable.js";
 
 export default class Skyscraper implements Visualizable, Solid {
     id:number;
@@ -110,5 +111,11 @@ export default class Skyscraper implements Visualizable, Solid {
 
     isSolid(){
         return true;
+    }
+
+    getMovableElements():Array<Movable>{
+        if(this.crate === null) return new Array<Movable>();
+        if(this.billboard === null) return new Array<Movable>();
+        return this.crate.getMovableElements().concat(this.billboard.getMovableElements());
     }
 }
