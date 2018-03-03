@@ -36,6 +36,8 @@ export default class Plane implements Visualizable, Movable, Expandable {
     description_stop_x_percentage:number = 52.730;
     description_start_y_percentage:number = 8.451;
     description_stop_y_percentage:number = 91.549;
+
+    description_lines:Array<string>;
     
 
     constructor(informationObject:InformationObject){
@@ -86,12 +88,50 @@ export default class Plane implements Visualizable, Movable, Expandable {
         context.beginPath();
         context.font = "bold " + this.title_font_size + "pt Arial";
         context.fillStyle = default_settings.game.plane.title_color;
-        console.log(this.width + "(width),  " + this.x + "(x), " + this.title_start_x_percentage + "(percentage), drawing on " + (this.x + (this.title_start_x_percentage*this.width/100)));
         context.fillText(<string>this.informationObject.getTitle(), this.viewPort.calculateX(this.x + (this.title_start_x_percentage*this.width/100)), this.y + (this.title_start_y_percentage*this.height/100) + this.title_font_size);
         
 
         //DRAW DESCRIPTION
         if(this.description_font_size === -1) this.defineDescriptionFont(context);
+        this.description_lines.forEach((line:string, index:number)=>{
+            context.beginPath();
+            context.font = this.description_font_size + "pt Arial";
+            context.fillStyle = default_settings.game.plane.description_color;
+            context.fillText(line, this.viewPort.calculateX(this.x + (this.description_start_x_percentage*this.width/100)), this.y + (this.description_start_y_percentage*this.height/100) + index*this.description_font_size + this.description_font_size + index*(this.description_font_size/1.5));
+        });
+
+    }
+
+    private defineDescriptionLines(context:CanvasRenderingContext2D, font_size:number=this.description_font_size){
+        let result = new Array<string>();
+        let words = this.informationObject.getDescription().split(" ");
+        let text_field_size = this.description_stop_x_percentage*this.width/100 - this.description_start_x_percentage*this.width/100;
+        context.beginPath();
+        context.font = font_size + "pt Arial";
+        words.forEach((word:string, index:number)=>{
+            if(result.length === 0 || result[result.length-1].length === 0){
+                //FIRST WORD
+                result.push(word);
+                return;
+            }else{
+                //OTHER
+                result[result.length-1] += " " + word;
+            }
+            if(context.measureText(result[result.length-1]).width > text_field_size){
+                let line = "";
+                let word_length = result[result.length-1].split(" ").length;
+                result[result.length-1].split(" ").forEach((value:String, index:number)=>{
+                    if(index === word_length-1) return;
+                    line += (index===word_length-1?"":" ") + value;
+                });
+                result[result.length-1] = line;
+                result.push(word);
+            }
+        });
+        result.forEach((line:String, index:number)=>{
+            result[index] = line.trim();
+        });
+        this.description_lines = result;
     }
 
     private defineTitleFont(context:CanvasRenderingContext2D){
@@ -109,7 +149,16 @@ export default class Plane implements Visualizable, Movable, Expandable {
 
     private defineDescriptionFont(context:CanvasRenderingContext2D){
         //INCOMPLETE ! ! !
-        this.description_font_size = 20;
+        this.description_font_size = 15;
+        while(this.description_font_size>0){
+            this.defineDescriptionLines(context);
+            let total_height = this.description_lines.length*this.description_font_size + (this.description_lines.length-1)*(this.description_font_size/1.5);
+            console.log(total_height + " < " + ((this.description_stop_y_percentage*this.height/100) - (this.description_start_y_percentage*this.height/100)));
+            if(total_height < (this.description_stop_y_percentage*this.height/100) - (this.description_start_y_percentage*this.height/100)){
+                return;
+            }
+            this.description_font_size--;
+        }
     }
 
     move(){

@@ -31,6 +31,7 @@ export let default_settings = {
             sprite_change_delay: 50,
             speed: 2,
             title_color: "black",
+            description_color: "black",
         },
     },
     images: {
