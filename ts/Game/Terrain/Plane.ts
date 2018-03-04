@@ -153,7 +153,6 @@ export default class Plane implements Visualizable, Movable, Expandable {
         while(this.description_font_size>0){
             this.defineDescriptionLines(context);
             let total_height = this.description_lines.length*this.description_font_size + (this.description_lines.length-1)*(this.description_font_size/1.5);
-            console.log(total_height + " < " + ((this.description_stop_y_percentage*this.height/100) - (this.description_start_y_percentage*this.height/100)));
             if(total_height < (this.description_stop_y_percentage*this.height/100) - (this.description_start_y_percentage*this.height/100)){
                 return;
             }

@@ -1,7 +1,7 @@
 import Hint from "./Hint.js";
 import { default_settings } from "../../DefaultSettings.js";
 
-export default class CrateHint extends Hint {
+export default class ButtonHint extends Hint {
     listener: number;
 
     constructor(description:String=""){

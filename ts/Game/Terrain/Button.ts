@@ -5,14 +5,14 @@ import Skyscraper from "./Skyscraper.js";
 import { default_settings } from "../../DefaultSettings.js";
 import ViewPort from "../ViewPort.js";
 import Screen from "../Screen.js";
-import CrateHint from "../Hint/CrateHint.js";
 import Game from "../Game.js";
 import Keyboard from "../Keyboard.js";
 import KeyListener from "../KeyListener.js";
 import Plane from "./Plane.js";
 import Movable from "../Movable.js";
+import ButtonHint from "../Hint/ButtonHint.js";
 
-export default class Crate implements Visualizable, Expandable {
+export default class Button implements Visualizable, Expandable {
     x:number;
     y:number;
     width:number;
@@ -20,28 +20,25 @@ export default class Crate implements Visualizable, Expandable {
     skyscraper:Skyscraper;
     viewPort:ViewPort;
 
-    crateHint:CrateHint;
+    buttonHint:ButtonHint;
 
-    sprite:HTMLImageElement;
-    spriteLoaded:boolean;
+    spriteOn:HTMLImageElement;
+    spriteOff:HTMLImageElement;
+    spritesLoaded:number;
 
     opened:boolean;
-    transforming:boolean;
-    transformation:number;
 
     informationObject:InformationObject;
 
     plane:Plane;
 
     constructor(informationObject:InformationObject){
-        this.spriteLoaded = false;
-        this.transformation = 0;
-        this.transforming = false;
+        this.spritesLoaded = 0;
         this.opened = false;
         this.informationObject = informationObject;
         this.plane = new Plane(informationObject);
-        this.width = 60;
-        this.height = 45;
+        this.width = 38;
+        this.height = 60;
         this.initializeSprite();
         setTimeout(this.initializeCrateHint.bind(this), 1);
         this.setKeyListener();
@@ -50,71 +47,42 @@ export default class Crate implements Visualizable, Expandable {
     setKeyListener(){
         Keyboard.getInstance().addKeyListener(new KeyListener("e", (()=>{
             if(Game.getInstance().player.collidingElements.indexOf(this) !== -1){
-                if(this.transforming) return;
-                Game.getInstance().getCrates().forEach(((crate:Crate)=>{
-                    if(crate === this){
+                Game.getInstance().getButtons().forEach(((button:Button)=>{
+                    if(button === this){
                         return;
                     }
-                    if(crate.transforming && !crate.opened){
-                        crate.close();
-                    }
-                    if(crate.opened && !crate.transforming){
-                        crate.close();
+                    if(button.opened){
+                        button.close();
                     }
                 }).bind(this));
                 if(this.opened){
                     //CLOSING
-                    this.plane.close();
-                    this.setTransformation();
+                    this.close();
                 }else{
                     //OPENING
-                    this.plane.expand();
-                    this.setTransformation();
+                    this.expand();
                 }
             }
         }).bind(this)));
     }
 
-    setTransformation(){
-        this.transforming = true;
-        setTimeout((()=>{
-            if(this.opened){
-                //CLOSING
-                this.transformation--;
-                if(this.transformation === 0){
-                    //Transformation done
-                    this.transforming = false;
-                    this.opened = false;
-                }
-            }else{
-                //OPENING
-                this.transformation++;
-                if(this.transformation === 3){
-                    //Transformation done
-                    this.transforming = false;
-                    this.opened = true;
-                }
-            }
-
-            if(this.transforming)
-                this.setTransformation();
-        }).bind(this), 100);
-    }
-
     initializeCrateHint(){
-        this.crateHint = new CrateHint("Press E for more information.");
+        this.buttonHint = new ButtonHint("Press E for more information");
         let game = Game.getInstance();
         game.player.setCollisionListener(this, (()=>{
-            this.crateHint.expand();
+            this.buttonHint.expand();
         }).bind(this), (()=>{
-            this.crateHint.close();
+            this.buttonHint.close();
         }).bind(this));
     }
 
     initializeSprite(){
-        this.sprite = new Image();
-        this.sprite.src = "Images/Crate/crateOpeningSprite.png";
-        this.sprite.onload = (()=>{ this.spriteLoaded = true; }).bind(this);
+        this.spriteOn = new Image();
+        this.spriteOn.src = "Images/Button/buttonOn.png";
+        this.spriteOn.onload = (()=>{ this.spritesLoaded++; }).bind(this);
+        this.spriteOff = new Image();
+        this.spriteOff.src = "Images/Button/buttonOff.png";
+        this.spriteOff.onload = (()=>{ this.spritesLoaded++; }).bind(this);
     }
 
     setSkyscraper(skyscraper:Skyscraper){
@@ -128,36 +96,25 @@ export default class Crate implements Visualizable, Expandable {
     }
 
     draw(context:CanvasRenderingContext2D){
-        if(!this.spriteLoaded) return;
+        if(this.spritesLoaded < 2) return;
         if(this.viewPort === null || this.viewPort === undefined) this.viewPort = Screen.getInstance().getViewPort();
         context.beginPath();
-        let spriteWidth = this.sprite.width / 4;
-        context.drawImage(this.sprite, this.transformation*spriteWidth, 0, spriteWidth, this.sprite.height, this.viewPort.calculateX(this.x), this.y, this.width, this.height);
+        context.drawImage((this.opened ? this.spriteOn : this.spriteOff), 0, 0, (this.opened ? this.spriteOn.width : this.spriteOff.width), (this.opened ? this.spriteOn.height : this.spriteOff.height), this.viewPort.calculateX(this.x), this.y, this.width, this.height);
 
-        this.crateHint.draw(context);
+        this.buttonHint.draw(context);
         this.plane.draw(context);
     }
 
     expand(){
-        if(this.transforming){
-            return;
-        }else{
-            if(this.opened) return;
-            this.plane.expand();
-            this.setTransformation();
-        }
+        this.plane.expand();
+        this.buttonHint.setDescription("Press E to hide information");
+        this.opened = true;
     }
 
     close(){
-        if(this.transforming){
-            if(this.opened) return;
-            this.opened = true;
-            this.plane.close();
-        }else{
-            if(!this.opened) return;
-            this.setTransformation();
-            this.plane.close();
-        }
+        this.plane.close();
+        this.buttonHint.setDescription("Press E for more information");
+        this.opened = false;
     }
 
     redefinePosition(widthDiff:number, heightDiff:number){

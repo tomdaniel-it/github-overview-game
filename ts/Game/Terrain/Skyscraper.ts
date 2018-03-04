@@ -2,11 +2,11 @@ import Visualizable from "../Visualizable.js";
 import Solid from "../Solid.js";
 import Screen from "../Screen.js";
 import Expandable from "../Expandable.js";
-import Crate from "./Crate.js";
 import { default_settings } from "../../DefaultSettings.js";
 import ViewPort from "../ViewPort.js";
 import Billboard from "./Billboard.js";
 import Movable from "../Movable.js";
+import Button from "./Button.js";
 
 export default class Skyscraper implements Visualizable, Solid {
     id:number;
@@ -14,7 +14,7 @@ export default class Skyscraper implements Visualizable, Solid {
     y:number;
     width:number;
     height:number;
-    crate:Crate|null;
+    button:Button|null;
     billboard:Billboard|null;
     previousSkyscraper:Skyscraper|null;
     color:String;
@@ -22,7 +22,7 @@ export default class Skyscraper implements Visualizable, Solid {
     sprite:HTMLImageElement;
     spriteLoaded:boolean;
 
-    constructor(previousSkyscraper:Skyscraper|null=null, crate:Crate|null=null, billboard:Billboard|null=null){
+    constructor(previousSkyscraper:Skyscraper|null=null, button:Button|null=null, billboard:Billboard|null=null){
         this.previousSkyscraper = previousSkyscraper;
         this.setId();
         if(this.previousSkyscraper === null){
@@ -34,9 +34,9 @@ export default class Skyscraper implements Visualizable, Solid {
         }
         this.spriteLoaded = false;
         this.defineSprite();
-        this.crate = crate;
+        this.button = button;
         this.billboard = billboard;
-        if(this.crate !== null) this.crate.setSkyscraper(this);
+        if(this.button !== null) this.button.setSkyscraper(this);
         if(this.billboard !== null) this.billboard.setSkyscraper(this);
     }
 
@@ -78,13 +78,13 @@ export default class Skyscraper implements Visualizable, Solid {
         if(this.viewPort === null || this.viewPort === undefined) this.viewPort = Screen.getInstance().getViewPort();
         context.beginPath();
         context.drawImage(this.sprite, 0, 0, this.sprite.width, (this.height/(this.width/this.sprite.width)>this.sprite.height?this.sprite.height:this.height/(this.width/this.sprite.width)), this.viewPort.calculateX(this.x), this.y, this.width, this.height);
-        if(this.crate !== null) this.crate.draw(context);
+        if(this.button !== null) this.button.draw(context);
         if(this.billboard !== null) this.billboard.draw(context);
     }
 
     redefinePosition(widthDiff:number, heightDiff:number){
         this.y = Screen.getInstance().getHeight() - this.height;
-        if(this.crate !== null) this.crate.redefinePosition(widthDiff, heightDiff);
+        if(this.button !== null) this.button.redefinePosition(widthDiff, heightDiff);
     }
 
     private defineSprite() {
@@ -114,8 +114,8 @@ export default class Skyscraper implements Visualizable, Solid {
     }
 
     getMovableElements():Array<Movable>{
-        if(this.crate === null) return new Array<Movable>();
+        if(this.button === null) return new Array<Movable>();
         if(this.billboard === null) return new Array<Movable>();
-        return this.crate.getMovableElements().concat(this.billboard.getMovableElements());
+        return this.button.getMovableElements().concat(this.billboard.getMovableElements());
     }
 }

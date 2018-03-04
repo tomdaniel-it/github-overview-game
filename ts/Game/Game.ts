@@ -8,10 +8,9 @@ import { default_settings } from "../DefaultSettings.js";
 import TerrainBuilder from "./TerrainBuilder.js";
 import Skyscraper from "./Terrain/Skyscraper.js";
 import Hint from "./Hint/Hint.js";
-import CrateHint from "./Hint/CrateHint.js";
 import Solid from "./Solid.js";
 import Vector from "./Vector.js";
-import Crate from "./Terrain/Crate.js";
+import Button from "./Terrain/Button.js";
 
 export default class Game {
     static uniqueInstance:Game;
@@ -24,7 +23,6 @@ export default class Game {
     movableElements:Array<Movable>;
     player:Player;
     terrainBuilder:TerrainBuilder;
-    crateHint:CrateHint;
 
     private constructor(){
         this.canvas = <HTMLCanvasElement> document.querySelector("canvas");
@@ -99,10 +97,10 @@ export default class Game {
         return skyscrapers;
     }
 
-    getCrates():Array<Crate>{
-        let crates = new Array<Crate>();
+    getButtons():Array<Button>{
+        let crates = new Array<Button>();
         this.getSkyscrapers().forEach((skyscraper:Skyscraper)=>{
-            if(skyscraper.crate !== null) crates.push(skyscraper.crate);
+            if(skyscraper.button !== null) crates.push(skyscraper.button);
         });
         return crates;
     }
