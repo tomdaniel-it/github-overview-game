@@ -87,7 +87,7 @@ export default class BillboardLetter implements Visualizable, Movable {
     }
 
     redefinePosition(){
-
+        return;
     }
 
     getX(){

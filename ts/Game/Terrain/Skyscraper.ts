@@ -76,15 +76,16 @@ export default class Skyscraper implements Visualizable, Solid {
     draw(context:CanvasRenderingContext2D){
         if(!this.spriteLoaded) return;
         if(this.viewPort === null || this.viewPort === undefined) this.viewPort = Screen.getInstance().getViewPort();
+        if(this.button !== null) this.button.draw(context);
         context.beginPath();
         context.drawImage(this.sprite, 0, 0, this.sprite.width, (this.height/(this.width/this.sprite.width)>this.sprite.height?this.sprite.height:this.height/(this.width/this.sprite.width)), this.viewPort.calculateX(this.x), this.y, this.width, this.height);
-        if(this.button !== null) this.button.draw(context);
         if(this.billboard !== null) this.billboard.draw(context);
     }
 
     redefinePosition(widthDiff:number, heightDiff:number){
         this.y = Screen.getInstance().getHeight() - this.height;
         if(this.button !== null) this.button.redefinePosition(widthDiff, heightDiff);
+        if(this.billboard !== null) this.billboard.redefinePosition();
     }
 
     private defineSprite() {

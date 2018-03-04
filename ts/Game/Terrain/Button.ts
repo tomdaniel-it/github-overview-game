@@ -98,11 +98,11 @@ export default class Button implements Visualizable, Expandable {
     draw(context:CanvasRenderingContext2D){
         if(this.spritesLoaded < 2) return;
         if(this.viewPort === null || this.viewPort === undefined) this.viewPort = Screen.getInstance().getViewPort();
+        this.plane.draw(context);
         context.beginPath();
         context.drawImage((this.opened ? this.spriteOn : this.spriteOff), 0, 0, (this.opened ? this.spriteOn.width : this.spriteOff.width), (this.opened ? this.spriteOn.height : this.spriteOff.height), this.viewPort.calculateX(this.x), this.y, this.width, this.height);
 
         this.buttonHint.draw(context);
-        this.plane.draw(context);
     }
 
     expand(){

@@ -19,13 +19,13 @@ export default class Billboard implements Visualizable {
     billboard_letters:Array<BillboardLetter>;
 
     constructor(informationObject:InformationObject, skyscraper:Skyscraper|null=null){
-        this.billboard_letters = new Array<BillboardLetter>();
         this.informationObject = informationObject;
         if(skyscraper !== null) this.skyscraper = skyscraper;
         this.defineLetters();
     }
 
     private defineLetters(){
+        this.billboard_letters = new Array<BillboardLetter>();
         this.informationObject.getTitle().split("").forEach((value:string, index:number)=>{
             this.billboard_letters.push(new BillboardLetter(index, value, this));
         });
@@ -72,7 +72,9 @@ export default class Billboard implements Visualizable {
     }
 
     redefinePosition(){
-
+        this.defineDimensions();
+        this.definePosition();
+        this.defineLetters();
     }
 
     getX(){
