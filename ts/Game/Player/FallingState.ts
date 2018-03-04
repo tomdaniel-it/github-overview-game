@@ -68,7 +68,7 @@ export default class FallingState implements PlayerState {
         }
 
         //CHECK FOR DEAD STATE
-        if(this.player.isOutOfScreen()){
+        if(this.player.isOutOfScreenExceptTop()){
             this.player.setState(new DeadState(this.player));
             this.stateChecker.stop();
             return;

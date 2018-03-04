@@ -202,11 +202,17 @@ export default class Player implements Visualizable, Movable {
     isOutOfScreen():boolean{
         let screen = Screen.getInstance();
 
+        let outTop = this.y + this.height < screen.getY();
+        return outTop || this.isOutOfScreenExceptTop();
+    }
+
+    isOutOfScreenExceptTop():boolean{
+        let screen = Screen.getInstance();
+
         let outLeft = this.x + this.width < screen.getX() + screen.getViewPort().x; 
         let outRight = this.x > screen.getX() + screen.getWidth() + screen.getViewPort().x;
-        let outTop = this.y + this.height < screen.getY();
         let outBottom = this.y > screen.getY() + screen.getHeight();
-        return outLeft || outRight || outTop || outBottom;
+        return outLeft || outRight || outBottom;
     }
 
     getMovableElements(){
