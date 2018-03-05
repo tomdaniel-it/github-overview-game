@@ -7,12 +7,14 @@ import ViewPort from "../ViewPort.js";
 import Billboard from "./Billboard.js";
 import Movable from "../Movable.js";
 import Button from "./Button.js";
+import Game from "../Game.js";
 
 export default class Skyscraper implements Visualizable, Solid {
     id:number;
     x:number;
     y:number;
-    width:number;
+    originalHeight:number;
+    width:number = 300;
     height:number;
     button:Button|null;
     billboard:Billboard|null;
@@ -22,15 +24,19 @@ export default class Skyscraper implements Visualizable, Solid {
     sprite:HTMLImageElement;
     spriteLoaded:boolean;
 
+    minHeight:number;
+    maxHeight:number;
+
     constructor(previousSkyscraper:Skyscraper|null=null, button:Button|null=null, billboard:Billboard|null=null){
         this.previousSkyscraper = previousSkyscraper;
         this.setId();
+        this.defineHeightRange();
         if(this.previousSkyscraper === null){
             //First skyscraper
             this.defineRandomSize();
         }else{
             //Define x, y, width, height based on previous skyscraper so player can jump back and forth
-            this.defineSize();
+            this.defineSizeAndPos();
         }
         this.spriteLoaded = false;
         this.defineSprite();
@@ -38,6 +44,14 @@ export default class Skyscraper implements Visualizable, Solid {
         this.billboard = billboard;
         if(this.button !== null) this.button.setSkyscraper(this);
         if(this.billboard !== null) this.billboard.setSkyscraper(this);
+        setTimeout(this.initializePlayerCollisionListener.bind(this), 1);
+    }
+
+    private initializePlayerCollisionListener(){
+        let game = Game.getInstance();
+        game.player.setCollisionListener(this, (()=>{
+            game.player.setY(this.y - game.player.getHeight());
+        }).bind(this), (()=>{}).bind(this), true);
     }
 
     private setId():void{
@@ -52,23 +66,49 @@ export default class Skyscraper implements Visualizable, Solid {
         return this.id;
     }
 
+    defineHeightRange(){
+        let screen = Screen.getInstance();
+        if(screen.getWidth() > screen.getHeight()){
+            //LANDSCAPE
+            if(screen.getHeight()/screen.getWidth() <= 0.60){
+                this.minHeight = 0.30 * screen.getHeight();
+                this.maxHeight = 0.55 * screen.getHeight();
+            }else{
+                this.minHeight = 0.25 * screen.getHeight();
+                this.maxHeight = 0.45 * screen.getHeight();
+            }
+        }else{
+            //PORTRET
+                this.maxHeight = 0.70 * screen.getHeight();
+            if(screen.getHeight()/screen.getWidth() >= 90){
+                this.minHeight = 0.30 * screen.getHeight();
+            }else{
+                this.minHeight = 0.40 * screen.getHeight();
+            }
+        }
+    }
+
     defineRandomSize(){
-        this.width = 300;
-        this.height = 400;
+        this.height = Math.floor(Math.random()*(this.maxHeight-this.minHeight+1)+this.minHeight);
+        this.originalHeight = this.height;
         this.x = default_settings.game.window_margin_horizontal;
         this.y = Screen.getInstance().getHeight() - this.height;
     }
 
-    defineSize(){
+    defineSizeAndPos(){
         if(this.previousSkyscraper === null){
             this.defineRandomSize();
             return;
         }
         let previousSkyscraper = <Skyscraper> this.previousSkyscraper;
-        this.width = 300;
-        let heightDifference = Math.floor(Math.random()*(default_settings.game.skyscraper_max_height_difference-default_settings.game.skyscraper_min_height_difference+1)+ default_settings.game.skyscraper_min_height_difference);
-        heightDifference *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+        let heightDifference = 0;
+        while(true){
+            heightDifference = Math.floor(Math.random()*(default_settings.game.skyscraper_max_height_difference-default_settings.game.skyscraper_min_height_difference+1)+ default_settings.game.skyscraper_min_height_difference);
+            heightDifference *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+            if(previousSkyscraper.height + heightDifference > this.minHeight && previousSkyscraper.height + heightDifference < this.maxHeight) break;
+        }
         this.height = previousSkyscraper.height + heightDifference;
+        this.originalHeight = this.height;
         this.x = previousSkyscraper.x + previousSkyscraper.width + default_settings.game.skyscraper_space_inbetween;
         this.y = Screen.getInstance().getHeight() - this.height;
     }
@@ -83,6 +123,17 @@ export default class Skyscraper implements Visualizable, Solid {
     }
 
     redefinePosition(widthDiff:number, heightDiff:number){
+        //this.height += heightDiff;
+        this.defineHeightRange();
+        if(this.height < this.minHeight){
+            this.height = this.minHeight;
+        }else if(this.height > this.maxHeight){
+            this.height = this.maxHeight;
+        }else if(this.originalHeight > this.minHeight && this.originalHeight < this.maxHeight){
+            this.height = this.originalHeight;
+        }else{
+            this.height += heightDiff;
+        }
         this.y = Screen.getInstance().getHeight() - this.height;
         if(this.button !== null) this.button.redefinePosition(widthDiff, heightDiff);
         if(this.billboard !== null) this.billboard.redefinePosition();

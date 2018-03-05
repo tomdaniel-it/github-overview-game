@@ -90,7 +90,7 @@ export default class Player implements Visualizable, Movable {
         this.y += heightDiff;
     }
 
-    setCollisionListener(element:Visualizable, onCollision:Function, onRelease:Function){
+    setCollisionListener(element:Visualizable, onCollision:Function, onRelease:Function, repeat:boolean=false){
         setInterval((()=>{
             let leftA = element.getX();
             let leftB = this.getX();
@@ -101,7 +101,7 @@ export default class Player implements Visualizable, Movable {
             let bottomA = element.getY() + element.getHeight();
             let bottomB = this.getY() + this.getHeight();
             if (leftA < rightB && rightA > leftB && topA < bottomB && bottomA > topB){
-                if(this.collidingElements.indexOf(element) === -1){
+                if(this.collidingElements.indexOf(element) === -1 || repeat){
                     this.collidingElements.push(element);
                     onCollision();
                 }
@@ -120,6 +120,14 @@ export default class Player implements Visualizable, Movable {
 
     getY(){
         return this.y;
+    }
+
+    setX(x:number){
+        this.x = x;
+    }
+
+    setY(y:number){
+        this.y = y;
     }
 
     getWidth(){
