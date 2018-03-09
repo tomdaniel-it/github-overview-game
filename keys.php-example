@@ -1,0 +1,11 @@
+<?php
+    $keys = new stdClass();
+    $keys->github_api_client_id = "";
+    $keys->github_api_client_secret = "";
+
+    $keys->db = new stdClass();
+    $keys->db->servername = ""; //"localhost" in most cases
+    $keys->db->username = "";
+    $keys->db->password = "";
+    $keys->db->dbname = "";
+?>
