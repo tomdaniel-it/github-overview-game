@@ -1,4 +1,4 @@
 {
-  "description": "A javascript game which shows all github projects of a user.",
+  "description": "A javascript game which visualizes the GitHub projects of a chosen user in a fun, original way. The projects are dynamically fetched using the GitHub API.",
   "image_url": "http://thechurchontheway.org/wp-content/uploads/2016/05/placeholder1.png"
 }
