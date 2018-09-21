@@ -20,8 +20,8 @@
         while($row = $result->fetch_assoc()) {
             $date = new DateTime((string)$row["updated_at"]);
             $now = new DateTime((string)date("Y-m-d H:i:s"));
-            $diff = $date->diff($now);
-            if($diff->y > 0 || $diff->m > 0 || $diff->d > 0 || $diff->h > 0 || $diff->i > 2 || true){
+            $diff = $now->getTimestamp() - $date->getTimestamp();
+            if($diff > 30){
                 $manager = new GitHubManager();
                 $str = json_encode($manager->getProjects());
                 updateData($str);
