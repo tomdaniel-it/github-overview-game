@@ -29,7 +29,8 @@
                 array_push($results, $req->get());
             }
 
-            for($i=0;$i<count($this->projects);$i++){
+            for($i=0;$i<count($results);$i++){
+                if(!is_object($this->projects[$i])||!is_object($results[$i])) continue;
                 $this->projects[$i]->description = $results[$i]->description;
                 $this->projects[$i]->image_url = $results[$i]->image_url;
             }

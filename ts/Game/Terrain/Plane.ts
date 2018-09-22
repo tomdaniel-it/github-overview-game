@@ -104,29 +104,38 @@ export default class Plane implements Visualizable, Movable, Expandable {
 
     private defineDescriptionLines(context:CanvasRenderingContext2D, font_size:number=this.description_font_size){
         let result = new Array<string>();
-        let words = this.informationObject.getDescription().split(" ");
+        let words1 = this.informationObject.getDescription().split("\n");
+        let words = new Array<Array<String>>();
+        words1.forEach(item => {
+            words.push(item.split(" "));
+        });
+        console.log(words);
         let text_field_size = this.description_stop_x_percentage*this.width/100 - this.description_start_x_percentage*this.width/100;
         context.beginPath();
         context.font = font_size + "pt Arial";
-        words.forEach((word:string, index:number)=>{
-            if(result.length === 0 || result[result.length-1].length === 0){
-                //FIRST WORD
-                result.push(word);
-                return;
-            }else{
-                //OTHER
-                result[result.length-1] += " " + word;
-            }
-            if(context.measureText(result[result.length-1]).width > text_field_size){
-                let line = "";
-                let word_length = result[result.length-1].split(" ").length;
-                result[result.length-1].split(" ").forEach((value:String, index:number)=>{
-                    if(index === word_length-1) return;
-                    line += (index===word_length-1?"":" ") + value;
-                });
-                result[result.length-1] = line;
-                result.push(word);
-            }
+        words.forEach((arr:Array<String>) => {
+            let firstWord = true;
+            arr.forEach((word:string, index:number)=>{
+                if(firstWord){
+                    //FIRST WORD
+                    firstWord = false;
+                    result.push(word);
+                    return;
+                }else{
+                    //OTHER
+                    result[result.length-1] += " " + word;
+                }
+                if(context.measureText(result[result.length-1]).width > text_field_size){
+                    let line = "";
+                    let word_length = result[result.length-1].split(" ").length;
+                    result[result.length-1].split(" ").forEach((value:String, index:number)=>{
+                        if(index === word_length-1) return;
+                        line += (index===word_length-1?"":" ") + value;
+                    });
+                    result[result.length-1] = line;
+                    result.push(word);
+                }
+            });
         });
         result.forEach((line:String, index:number)=>{
             result[index] = line.trim();

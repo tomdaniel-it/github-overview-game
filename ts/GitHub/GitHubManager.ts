@@ -1,6 +1,7 @@
 import {default_settings} from "../DefaultSettings.js";
 import Project from "../Project.js";
 import { HttpClient } from "./HttpClient.js";
+let counter = 0;
 
 export default class GitHubManager {
     projects:Array<Project>;
@@ -12,6 +13,7 @@ export default class GitHubManager {
     }
 
     private initializeProjects(){
+        if (counter > 0) return;
         let request3 = new GitHubRequest();
         request3.send();
         (<Array<Object>>JSON.parse(request3.getResponseText())).forEach(((value:Object)=>{
@@ -46,6 +48,7 @@ class GitHubRequest{
     }
 
     send(){
+        ++counter;
         let httpClient = new HttpClient(this.url, this.callback, this.format, this.async);
         let httpClientResponse = httpClient.send();
         this.responseText = httpClientResponse.responseText;

@@ -34,5 +34,15 @@ export let default_settings = {
     },
     images: {
         skyscraper_amount: 7,
-    }
+    },
+    biographies: [
+        {
+            title: "About Me",
+            description: "I'm a motivated IT student. I love creating software as a job and as my hobby. Learning new technologies is a daily activity for me.\nI am a full-stack web & app developer."
+        },
+        {
+            title: "My Skills",
+            description: "Good: JavaScript (ES6, jQuery, Node, Typescript, ...), Java (, HTML, CSS, SQL)\nMedium: PHP"
+        }
+    ]
 };

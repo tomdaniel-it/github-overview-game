@@ -1,3 +1,4 @@
+import { default_settings } from './../DefaultSettings.js';
 import Visualizable from "./Visualizable.js";
 import Skyscraper from "./Terrain/Skyscraper.js";
 import Biography from "../Biography.js";
@@ -31,13 +32,11 @@ export default class TerrainBuilder {
     }
 
     createBiographySkyscrapers(){
-        let aboutMe = new Biography("About me");
-        aboutMe.setDescription("I am an IT student lorum ipsum this is a place holder. This should also jump automatically to a new line so I'm just keeping on writing text until I think it's enough. I'm 20 years old (which should be generated from my birthdate so no automatic updates are needed!). Alright enough now. Now I'm just going to keep writing random text just to create some height in this so called 'textbox' which I had to create myself cause fillText() doesn't have a multiline feature FFS... But oh well, you gotta do what you gotta do I guess :)");
-        this.skyscrapers.push(new Skyscraper(this.getLastSkyscraper(),new Button(aboutMe), new Billboard(aboutMe)));
-
-        let anotherOne = new Biography("Another BIO");
-        anotherOne.setDescription("This is a short second biography. To be created...");
-        this.skyscrapers.push(new Skyscraper(this.getLastSkyscraper(), new Button(anotherOne), new Billboard(anotherOne)));
+        default_settings.biographies.forEach(biographyItem => {
+            let biography = new Biography(biographyItem.title);
+            biography.setDescription(biographyItem.description);
+            this.skyscrapers.push(new Skyscraper(this.getLastSkyscraper(),new Button(biography), new Billboard(biography)));
+        });
     }
 
     createProjectSkyscrapers(){
