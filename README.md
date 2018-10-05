@@ -16,3 +16,5 @@ Add a `GitHub-Overview-Info.json` file to every repository which you want in you
 ```
 ### Edit starting biographies
 You can configure `ts/DefaultSettings.ts` to create your own biographies, such like 'About me' and 'My skills'.
+
+![Preview](http://overview.tomdaniel.be/screenshot.png)
