@@ -52,6 +52,7 @@
     class GitHubRequest_All {
         private $format;
         private $url;
+        private $authHeaderValue;
         private $response;
         private $status;
 
@@ -61,10 +62,11 @@
             $this->response = null;
             $this->status = false;
             $this->constructUrl();
+            $this->constructAuthHeaderValue();
         }
 
         function send(){
-            $httpClient = new HttpClient($this->url, $this->format);
+            $httpClient = new HttpClient($this->url, $this->format, $this->authHeaderValue);
             $response = $httpClient->send();
             if(!$response){
                 return;
@@ -82,14 +84,20 @@
         }
 
         private function constructUrl(){
-            global $default_settings, $keys;
-            $this->url = $default_settings->github->api_url . "/users/" . $default_settings->github->user . "/repos" . "?client_id=" . $keys->github_api_client_id . "&client_secret=" . $keys->github_api_client_secret;
+            global $default_settings;
+            $this->url = $default_settings->github->api_url . "/users/" . $default_settings->github->user . "/repos";
+        }
+
+        private function constructAuthHeaderValue(){
+            global $keys;
+            $this->authHeaderValue = "Basic " . base64_encode($keys->github_api_client_id . ":" . $keys->github_api_client_secret);
         }
     }
 
     class GitHubRequest_Project {
         private $format;
         private $url;
+        private $authHeaderValue;
         private $project_name;
 
         function __construct($project_name)
@@ -97,10 +105,11 @@
             $this->format = "JSON";
             $this->project_name = $project_name;
             $this->constructUrl();
+            $this->constructAuthHeaderValue();
         }
 
         function get(){
-            $httpClient = new HttpClient($this->url, $this->format);
+            $httpClient = new HttpClient($this->url, $this->format, $this->authHeaderValue);
             $response = $httpClient->send();
             if(!$response){
                 return null;
@@ -111,7 +120,12 @@
         }
 
         private function constructUrl(){
-            global $default_settings, $keys;
-            $this->url = $default_settings->github->api_url . "/repos/" . $default_settings->github->user . "/" . $this->project_name . "/contents/" . $default_settings->github->info_file_name . "?client_id=" . $keys->github_api_client_id . "&client_secret=" . $keys->github_api_client_secret;
+            global $default_settings;
+            $this->url = $default_settings->github->api_url . "/repos/" . $default_settings->github->user . "/" . $this->project_name . "/contents/" . $default_settings->github->info_file_name;
+        }
+
+        private function constructAuthHeaderValue(){
+            global $keys;
+            $this->authHeaderValue = "Basic " . base64_encode($keys->github_api_client_id . ":" . $keys->github_api_client_secret);
         }
     }

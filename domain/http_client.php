@@ -5,10 +5,15 @@
     class HttpClient {
         public $url;
         public $format;
+        public $authHeaderValue;
+        private $contextGET;
+        private $contextHEAD;
 
-        function __construct($url, $format){
+        function __construct($url, $format, $authHeaderValue = NULL){
             $this->url = $url;
             $this->format = $format;
+            $this->authHeaderValue = $authHeaderValue;
+            $this->constructContexts();
         }
 
         function send(){
@@ -16,7 +21,8 @@
             if($http_code != 200){
                 return false;
             }
-            $json = file_get_contents($this->url);
+            
+            $json = file_get_contents($this->url, false, $this->contextGET);
             if(!$json){
                 return false;
             }else{
@@ -26,8 +32,42 @@
         }
 
         function get_http_response_code($url) {
-            $headers = get_headers($url, 1);
-            return substr($headers[0], 9, 3);
+            file_get_contents($this->url, false, $this->contextHEAD);
+            return intval(explode(" ", $http_response_header[0])[1]);
+        }
+
+        private function constructContexts() {
+            if ($this->authHeaderValue !== NULL) {
+              $opts = array(
+                'http'=>array(
+                  'method'=>"GET",
+                  'header'=>"Authorization: " . $this->authHeaderValue . "\r\n"
+                )
+              );
+              $this->contextGET = stream_context_create($opts);
+  
+              $opts = array(
+                'http'=>array(
+                  'method'=>"HEAD",
+                  'header'=>"Authorization: " . $this->authHeaderValue . "\r\n"
+                )
+              );
+              $this->contextHEAD = stream_context_create($opts);
+            } else {
+              $opts = array(
+                'http'=>array(
+                  'method'=>"GET",
+                )
+              );
+              $this->contextGET = stream_context_create($opts);
+  
+              $opts = array(
+                'http'=>array(
+                  'method'=>"HEAD",
+                )
+              );
+              $this->contextHEAD = stream_context_create($opts);
+            }
         }
     }
 
